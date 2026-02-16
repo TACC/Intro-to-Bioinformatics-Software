@@ -1,10 +1,21 @@
-Introduction to Bioinformatics Software
-======================================
+Bioinformatics Software on HPC Clusters
+========================================
 
-Welcome to the course documentation.
+This documentation is for **HPC administrators and staff** who run or support
+many-core clusters and want to become familiar with common
+bioinformatics tools and workflows: downloading public data, genomics and
+RNA-seq pipelines, R-based analyses with job arrays, and more. Examples use **SLURM**, 
+**Biocontainers**, and **Singularity/Apptainer**, and emphasize resource requests, thread scaling,
+and reproducibility.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   bio-software-knl-training
+   introduction
+   data-acquisition
+   genomics-workflow
+   lfmm
+   rnaseq-workflow
+   phylogenomics
+   alphafold
