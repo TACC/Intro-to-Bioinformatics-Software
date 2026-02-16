@@ -14,8 +14,3 @@ and reproducibility.
 
    introduction
    data-acquisition
-   genomics-workflow
-   lfmm
-   rnaseq-workflow
-   phylogenomics
-   alphafold

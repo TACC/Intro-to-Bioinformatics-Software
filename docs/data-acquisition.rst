@@ -64,49 +64,19 @@ why this matters for HPC admins and how to run these tools on cluster systems.
 Why this matters for HPC admins
 --------------------------------
 
-* **I/O and storage**: Large ``prefetch`` and ``fasterq-dump`` runs can stress
-  shared filesystems. Running many concurrent downloads on login nodes can
-  overload them; consider directing users to limit SRA downloads to one or two
-  login nodes or use dedicated transfer nodes.
-* **Network**: SRA downloads require outbound internet access, so they typically
-  run on login nodes or dedicated transfer nodes. Bandwidth can be heavy;
-  rate-limiting or scheduling large transfers during off-peak times may help.
-* **Temporary files**: ``fasterq-dump`` writes temporary files that can be as
-  large as (or larger than) the final output. Advise users to run from
-  local scratch so temp files do not fill home or project space.
-
-Best practice: where to run SRA downloads
-------------------------------------------
-
-**Running from login nodes is often necessary but not ideal.** On many clusters
-only login nodes (or dedicated transfer nodes) have outbound internet access,
-so SRA downloads have to run there. That does *not* make login nodes the right
-place for heavy or bulk use: many users running ``prefetch``/``fasterq-dump``
-at once can overload shared login nodes and hurt everyone's experience.
-
-**Recommended approach:**
-
-* **Prefer a dedicated transfer node** if your center provides one. Users run
-  Apptainer and SRA Toolkit there; the transfer node is meant for data
-  staging and can be tuned for network and I/O.
-* **If users must use login nodes**, limit concurrency (e.g. one or two
-  download streams per user, or use a specific login node for transfers) and
-  ask users to avoid large batches. Reserve login nodes for interactive work
-  and small, occasional downloads.
-* **Ideal when possible:** Provide a **partition or queue with outbound
-  access** so users submit a batch job that runs ``prefetch``/``fasterq-dump``
-  on a compute (or transfer) node. Login nodes then stay responsive; downloads
-  run in a controlled, resourced environment.
-
-**Apptainer/Biocontainers vs. user-installed SRA Toolkit:** Using the
-Biocontainers module (Apptainer) is usually better practice than having users
-install SRA Toolkit themselves: you get a single, versioned, supported stack.
-The "where to run" question is the same either way—both need a node with
-network. Installing the toolkit themselves does not remove the need to avoid
-overloading login nodes; it only changes how the binary is provided. So:
-provide SRA Toolkit via Biocontainers (or a module), and pair that with a
-clear policy on *where* downloads should run (transfer node or download job,
-not heavy use on login nodes).
+* **Network**: **prefetch** downloads from NCBI over HTTPS (port 443). Nodes that run
+  prefetch need outbound internet access and sufficient bandwidth; downloads can be
+  large and sustained (tens to hundreds of GB per run). 
+* **Storage and I/O**: **prefetch** writes ``.sra`` files to a cache directory; direct
+  users to put this on scratch space, not home. **fasterq-dump** needs
+  high write throughput and creates temporary working files that can be as large as
+  (or larger than) the final FASTQ. Have users run fasterq-dump from **local scratch** so
+  temp files do not fill shared storage.
+* **Cache and defaults**: If the SRA Toolkit cache location is not set, prefetch may
+  write to the user's home directory or current working directory, which can quickly
+  fill quota. Advise users to pass an explicit output path (e.g. ``prefetch -o
+  $SCRATCH/sra_cache SRR...``) or configure defaults with ``vdb-config`` so the cache
+  lives on scratch or project space. 
 
 Running on TACC systems with Apptainer and Biocontainers
 ---------------------------------------------------------
@@ -115,55 +85,6 @@ On TACC systems, SRA Toolkit is available via the **Biocontainers** module,
 which provides versioned container images that run under **Apptainer**.
 First, load the required modules, then invoke the tools inside the
 container.
-
-**Load modules:**
-
-.. code-block:: bash
-
-   module load apptainer
-   module load biocontainers
-
-After loading, the Biocontainers module typically provides a way to run
-tools by name (e.g. a wrapper or ``container run`` command). Use the
-image that includes the SRA Toolkit (often named ``sra-tools`` or similar)
-and run ``prefetch`` or ``fasterq-dump`` as the container entrypoint.
-
-**Example: prefetch one accession**
-
-Download an SRA run into a cache directory (e.g. in your ``$SCRATCH`` or
-project space). Replace ``SRR_ACCESSION`` and ``/path/to/cache`` with your
-accession and desired cache path.
-
-.. code-block:: bash
-
-   module load apptainer biocontainers
-
-   # Cache directory: use $SCRATCH or project space, not home
-   CACHE=/path/to/cache
-   mkdir -p $CACHE
-
-   # Prefetch downloads the .sra file into the cache
-   prefetch --output-file $CACHE/SRR_ACCESSION.sra SRR_ACCESSION
-
-**Example: fasterq-dump with local scratch**
-
-Run ``fasterq-dump`` so that its temporary files go to local scratch
-(``$TMPDIR`` or ``$LOCAL_SCRATCH`` on TACC). Point it at your cache and an
-output directory. Use ``-e`` to set the number of threads if desired.
-
-.. code-block:: bash
-
-   module load apptainer biocontainers
-
-   CACHE=/path/to/cache
-   OUTDIR=/path/to/fastq/output
-   ACC=SRR_ACCESSION
-
-   mkdir -p $OUTDIR
-
-   # Use local scratch for temp files (set by SLURM or your job script)
-   cd ${TMPDIR:-/tmp}
-   fasterq-dump --outdir $OUTDIR --threads 4 $CACHE/$ACC.sra
 
 Example 1: Downloading one SRA Accession (via idev)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
