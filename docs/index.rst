@@ -8,8 +8,9 @@ RNA-seq pipelines, R-based analyses with job arrays, and more. Examples use SLUR
 Biocontainers, and Singularity/Apptainer.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    introduction
    data-acquisition
+   alphafold2
