@@ -50,18 +50,16 @@ Low-quality bases or adapters are trimmed.
 Raw sequence reads contain synthetic oligonucleotides introduced by the library preparation. 
 These nucleotides do not belong to the biological sample and need to be removed before the alignment. 
 
-* ** Alignment to the genome assembly**
+* **Alignment to the genome assembly**
 Reads are aligned to a reference genome (e.g., the human genome) or transcriptome using algorithms such as BWA, bowtie2, or STAR.
 
 * **Post-processing**
 The output of the alignment need to be filtered, sorted and indexed for downstream analysis. 
 This includes sorting, removing duplicates, recalibrating quality scores, and indexing alignment files (BAM/CRAM format).
 
-* **Downstream analysis
+* **Downstream analysis**
 The following step depend on the type the experiment and are performed with various tools: bedtools, deeptools, HTseq, etc...
 Often these tools cannot run with multi-threading and benefit from the parallelization with SLURM.
-
-
 
 Overall, NGS analysis combines bioinformatics algorithms, statistical modeling, and biological interpretation to extract meaningful insights from millions to billions of sequence reads.
 
