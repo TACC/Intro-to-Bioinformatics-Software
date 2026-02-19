@@ -59,6 +59,3 @@ The output of the alignment (BAM/CRAM files) need to be prepared for downstream 
 Additional steps depend on the type the experiment and can be performed with various tools: bedtools, deeptools, HTseq, etc...
 Often these tools cannot run with multi-threading and benefit from the parallelization with SLURM.
 
-Overall, NGS analysis combines bioinformatics algorithms, statistical modeling, and biological interpretation to
-
-
