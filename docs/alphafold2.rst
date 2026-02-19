@@ -1,5 +1,3 @@
-.. _alphafold2:
-
 AlphaFold2
 ==========
 
@@ -117,8 +115,8 @@ section and related documentation.
 
   CUDA version 11.3 or higher required. 
 
-How TACC provides AlphaFold2: container and module
---------------------------------------------------
+Installations and access at TACC
+---------------------------------
 
 TACC provides AlphaFold2 as a **container image** plus a **Lua module file**
 that exposes a single entry point so users do not need to invoke Apptainer
@@ -240,11 +238,10 @@ are provided:
   # full_dbs.slurm
   # -----------------------------------------------------------------
   #SBATCH -J af2_full                   # Job name
-  #SBATCH -o logs/%x-%j.out             # Name of stdout output file
-  #SBATCH -e logs/%x-%j.err             # Name of stderr error file
+  #SBATCH -o af2_full.o%j               # Name of stdout output file
+  #SBATCH -e af2_full.e%j               # Name of stderr error file
   #SBATCH -p gpu-a100                   # Queue (partition) name
   #SBATCH -N 1                          # Total # of nodes 
-  #SBATCH -n 1                          # Total # of mpi tasks 
   #SBATCH -t 12:00:00                   # Run time (hh:mm:ss)
   #SBATCH -A <your-allocation>          # Project/Allocation name 
   # -----------------------------------------------------------------
@@ -261,7 +258,7 @@ are provided:
                    --max_template_date=2050-01-01 \
                    --use_gpu_relax=True
 
-2. ``reduced_dbs.slurm``: higher speed 
+1. ``reduced_dbs.slurm``: higher speed 
 
 .. code-block:: bash
 
@@ -387,7 +384,7 @@ Here is what the output directory for one fasta sequence looks like:
   -rw------- 1 user group 1.1K Feb 16 23:03 confidence_model_4_pred_0.json
   -rw------- 1 user group 1.1K Feb 16 23:04 confidence_model_5_pred_0.json
   -rw------- 1 user group 5.1M Feb 16 22:59 features.pkl
-  drwx------ 2 user group    4 Feb 16 22:58 msas
+  drwx------ 2 user group    4 Feb 16 22:58 msas/
   -rw------- 1 user group  52K Feb 16 23:04 ranked_0.cif
   -rw------- 1 user group  98K Feb 16 23:04 ranked_0.pdb
   -rw------- 1 user group  52K Feb 16 23:04 ranked_1.cif
