@@ -14,3 +14,4 @@ Biocontainers, and Singularity/Apptainer.
    introduction
    data-acquisition
    alphafold2
+   alphafold3
